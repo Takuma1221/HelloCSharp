@@ -1,18 +1,19 @@
 using Microsoft.AspNetCore.Mvc;
-using HelloCSharp.Models;
+using HelloCSharp.Areas.Samples.Models;
 
-namespace HelloCSharp.Controllers;
+namespace HelloCSharp.Areas.Samples.Controllers;
 
+[Area("Samples")]
 public class CalculatorController : Controller
 {
-    // GET: /Calculator
+    // GET: /Samples/Calculator
     // 計算フォームを表示
     public IActionResult Index()
     {
         return View();
     }
 
-    // POST: /Calculator
+    // POST: /Samples/Calculator
     // 計算を実行して結果を表示
     [HttpPost]
     [ValidateAntiForgeryToken]
@@ -32,9 +33,9 @@ public class CalculatorController : Controller
         {
             Number1 = input.Number1.Value,
             Number2 = input.Number2.Value,
-            Operation = input.Operation,
+            Operation = input.Operation!, // null-forgiving演算子
             Result = result,
-            Expression = BuildExpression(input.Number1.Value, input.Number2.Value, input.Operation, result)
+            Expression = BuildExpression(input.Number1.Value, input.Number2.Value, input.Operation!, result)
         };
 
         return View("Result", resultViewModel);

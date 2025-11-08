@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace HelloCSharp.Models;
+namespace HelloCSharp.Areas.Samples.Models;
 
 /// <summary>
 /// 電卓の入力データを表すViewModel

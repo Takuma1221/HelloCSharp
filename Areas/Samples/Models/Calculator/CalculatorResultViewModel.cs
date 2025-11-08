@@ -1,4 +1,4 @@
-namespace HelloCSharp.Models;
+namespace HelloCSharp.Areas.Samples.Models;
 
 /// <summary>
 /// 電卓の計算結果を表すViewModel
