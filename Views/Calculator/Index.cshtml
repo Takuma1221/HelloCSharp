@@ -1,0 +1,73 @@
+@model HelloCSharp.Models.CalculatorInputViewModel
+@{
+    ViewData["Title"] = "電卓";
+}
+
+<div class="calculator-container">
+    <h1>簡易電卓</h1>
+    <p>2つの数値を入力して演算を選択してください。</p>
+
+    <form asp-action="Index" method="post" class="calculator-form">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        
+        <div class="form-group">
+            <label asp-for="Number1"></label>
+            <input asp-for="Number1" class="form-control" type="number" step="0.01" placeholder="例: 10" />
+            <span asp-validation-for="Number1" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Operation"></label>
+            <select asp-for="Operation" class="form-control">
+                <option value="">-- 選択してください --</option>
+                <option value="add">足し算 (+)</option>
+                <option value="subtract">引き算 (-)</option>
+                <option value="multiply">掛け算 (×)</option>
+                <option value="divide">割り算 (÷)</option>
+            </select>
+            <span asp-validation-for="Operation" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Number2"></label>
+            <input asp-for="Number2" class="form-control" type="number" step="0.01" placeholder="例: 5" />
+            <span asp-validation-for="Number2" class="text-danger"></span>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">計算する</button>
+            <button type="reset" class="btn-secondary">リセット</button>
+        </div>
+    </form>
+
+    <div class="info-box">
+        <h3>使い方</h3>
+        <ul>
+            <li>このフォームは <strong>Model Binding</strong> と <strong>Data Annotations</strong> を使っています</li>
+            <li>入力値は自動的に検証されます（必須チェック）</li>
+            <li>POST送信で CalculatorController.Index に送られます</li>
+            <li>結果は CalculatorResultViewModel で Result.cshtml に渡されます</li>
+        </ul>
+    </div>
+</div>
+
+<style>
+.calculator-container { max-width: 600px; margin: 2rem auto; }
+.calculator-form { background: #f9f9f9; padding: 2rem; border-radius: 8px; margin-top: 1rem; }
+.form-group { margin-bottom: 1.5rem; }
+.form-group label { display: block; font-weight: bold; margin-bottom: 0.5rem; }
+.form-control { width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; }
+.text-danger { color: red; font-size: 0.9rem; margin-top: 0.25rem; display: block; }
+.form-actions { display: flex; gap: 1rem; margin-top: 2rem; }
+.btn-primary, .btn-secondary { padding: 0.75rem 2rem; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; }
+.btn-primary { background: #0066cc; color: white; }
+.btn-primary:hover { background: #0052a3; }
+.btn-secondary { background: #666; color: white; }
+.btn-secondary:hover { background: #555; }
+.info-box { margin-top: 2rem; padding: 1rem; background: #e7f3ff; border-left: 4px solid #0066cc; }
+.info-box h3 { margin-top: 0; }
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

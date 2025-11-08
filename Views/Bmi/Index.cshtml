@@ -1,0 +1,61 @@
+@model HelloCSharp.Models.BmiInputViewModel
+@{
+    ViewData["Title"] = "BMI計算アプリ";
+}
+
+<div class="bmi-container">
+    <h1>BMI計算アプリ</h1>
+    <p>体重と身長を入力してください。</p>
+
+    <form asp-action="Index" method="post" class="bmi-form">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        
+        <div class="form-group">
+            <label asp-for="Weight"></label>
+            <input asp-for="Weight" class="form-control" type="number" step="0.1" placeholder="例: 70" />
+            <span asp-validation-for="Weight" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Height"></label>
+            <input asp-for="Height" class="form-control" type="number" step="0.01" placeholder="例: 1.75" />
+            <span asp-validation-for="Height" class="text-danger"></span>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">計算する</button>
+            <button type="reset" class="btn-secondary">リセット</button>
+        </div>
+    </form>
+
+    <div class="info-box">
+        <h3>使い方</h3>
+        <ul>
+            <li>このフォームは <strong>Model Binding</strong> と <strong>Data Annotations</strong> を使っています</li>
+            <li>入力値は自動的に検証されます（必須チェック）</li>
+            <li>POST送信で BmiController.Index に送られます</li>
+            <li>結果は BmiResultViewModel で Result.cshtml に渡されます</li>
+        </ul>
+    </div>
+</div>
+
+<style>
+.bmi-container { max-width: 600px; margin: 2rem auto; }
+.bmi-form { background: #f9f9f9; padding: 2rem; border-radius: 8px; margin-top: 1rem; }
+.form-group { margin-bottom: 1.5rem; }
+.form-group label { display: block; font-weight: bold; margin-bottom: 0.5rem; }
+.form-control { width: 100%; padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px; font-size: 1rem; }
+.text-danger { color: red; font-size: 0.9rem; margin-top: 0.25rem; display: block; }
+.form-actions { display: flex; gap: 1rem; margin-top: 2rem; }
+.btn-primary, .btn-secondary { padding: 0.75rem 2rem; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; }
+.btn-primary { background: #0066cc; color: white; }
+.btn-primary:hover { background: #0052a3; }
+.btn-secondary { background: #666; color: white; }
+.btn-secondary:hover { background: #555; }
+.info-box { margin-top: 2rem; padding: 1rem; background: #e7f3ff; border-left: 4px solid #0066cc; }
+.info-box h3 { margin-top: 0; }
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

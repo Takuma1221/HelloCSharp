@@ -1,0 +1,79 @@
+@model HelloCSharp.Models.BmiResultViewModel
+@{
+    ViewData["Title"] = "計算結果";
+}
+
+<div class="result-container">
+    <h1>計算結果</h1>
+    
+    <div class="result-display">
+        <div class="expression">@Model.Category</div>
+        <div class="result-value">結果: @Model.Bmi</div>
+    </div>
+
+    <div class="calculation-details">
+        <h3>計算詳細</h3>
+        <table>
+            <tr>
+                <th>身長</th>
+                <td>@Model.Height</td>
+            </tr>
+            <tr>
+                <th>体重</th>
+                <td>@Model.Weight</td>
+            </tr>
+            <tr>
+                <th>計算方法</th>
+                <td>
+                    <div>計算式: BMI = 体重(kg) ÷ (身長(m) × 身長(m))</div>
+                    <div>@Model.Bmi.ToString("F2") = @Model.Weight ÷ (@(Model.Height/100) × @(Model.Height/100))</div>
+                </td>
+            </tr>
+            <tr>
+                <th>B M I</th>
+                <td>@Model.Bmi</td>
+            </tr>
+            <tr class="result-row">
+                <th>結果</th>
+                <td><strong>@Model.Category</strong></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="actions">
+        <a asp-action="Index" class="btn-primary">もう一度計算する</a>
+        <a asp-controller="Home" asp-action="Index" class="btn-secondary">ホームに戻る</a>
+    </div>
+
+    <div class="learning-note">
+        <h3>学習ポイント</h3>
+        <ul>
+            <li><code>@@model</code> ディレクティブで CalculatorResultViewModel を受け取っています</li>
+            <li><code>@@Model.Result</code> のように強く型付けされたプロパティにアクセスできます</li>
+            <li>ViewData ではなく ViewModel を使うことで、型安全かつ IntelliSense が効きます</li>
+            <li>Controller で計算ロジック（Model層の処理）を実行し、結果を View に渡しています</li>
+        </ul>
+    </div>
+</div>
+
+<style>
+.result-container { max-width: 700px; margin: 2rem auto; }
+.result-display { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 2rem; border-radius: 8px; text-align: center; margin: 2rem 0; }
+.expression { font-size: 1.5rem; margin-bottom: 1rem; }
+.result-value { font-size: 2rem; font-weight: bold; }
+.calculation-details { background: #f9f9f9; padding: 1.5rem; border-radius: 8px; margin: 2rem 0; }
+.calculation-details h3 { margin-top: 0; }
+.calculation-details table { width: 100%; border-collapse: collapse; }
+.calculation-details th, .calculation-details td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #ddd; }
+.calculation-details th { font-weight: bold; width: 40%; background: #f0f0f0; }
+.result-row { background: #fff3cd; font-size: 1.1rem; }
+.actions { display: flex; gap: 1rem; margin: 2rem 0; }
+.btn-primary, .btn-secondary { display: inline-block; padding: 0.75rem 1.5rem; text-decoration: none; border-radius: 4px; font-size: 1rem; text-align: center; }
+.btn-primary { background: #0066cc; color: white; }
+.btn-primary:hover { background: #0052a3; }
+.btn-secondary { background: #666; color: white; }
+.btn-secondary:hover { background: #555; }
+.learning-note { margin-top: 2rem; padding: 1rem; background: #e7f3ff; border-left: 4px solid #0066cc; }
+.learning-note h3 { margin-top: 0; }
+.learning-note code { background: #fff; padding: 0.2rem 0.4rem; border-radius: 3px; font-family: monospace; }
+</style>

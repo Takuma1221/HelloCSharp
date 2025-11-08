@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - HelloCSharp MVC</title>
+    <link rel="stylesheet" href="/css/site.css" />
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="/">Home</a> |
+            <a href="/Home/About">About</a> |
+            <a href="/Calculator">電卓</a> |
+            <a href="/Bmi">BMI</a>
+        </nav>
+    </header>
+    <main class="content">
+        @RenderBody()
+    </main>
+    <footer>
+        <small>&copy; @DateTime.Now.Year - HelloCSharp MVC Sample</small>
+    </footer>
+    <script src="/js/site.js"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

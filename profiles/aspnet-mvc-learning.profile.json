@@ -1,0 +1,23 @@
+{
+  "$schema": "vscode://schemas/profile",
+  "name": "aspnet-mvc-learning",
+  "extensions": [
+    "ms-dotnettools.csharp",
+    "ms-dotnettools.csdevkit",
+    "ms-dotnettools.vscode-dotnet-runtime",
+    "editorconfig.editorconfig",
+    "eamodio.gitlens",
+    "visualstudioexptteam.vscodeintellicode",
+    "ms-vscode.js-debug-nightly",
+    "github.github-vscode-theme",
+    "pkief.material-icon-theme",
+    "ms-azuretools.vscode-docker",
+    "humao.rest-client",
+    "jmrog.vscode-nuget-package-manager",
+    "streetsidesoftware.code-spell-checker"
+  ],
+  "settings": {
+    "workbench.colorTheme": "GitHub Light Default",
+    "workbench.iconTheme": "material-icon-theme"
+  }
+}

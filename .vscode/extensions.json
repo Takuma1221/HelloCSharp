@@ -1,0 +1,22 @@
+{
+  "recommendations": [
+    // Core C# / .NET
+    "ms-dotnettools.csharp",
+    "ms-dotnettools.csdevkit",
+    "ms-dotnettools.vscode-dotnet-runtime",
+    // Code Style & Quality
+    "editorconfig.editorconfig",
+    "eamodio.gitlens",
+    "streetsidesoftware.code-spell-checker",
+    "visualstudioexptteam.vscodeintellicode", // AI補助 (IntelliCode)
+    // Frontend/JS debug
+    "ms-vscode.js-debug-nightly",
+    // Light Theme / UI
+    "github.github-vscode-theme", // GitHub Light / Dark
+    "akamud.vscode-theme-onedark", // 目的: 比較用 (One Dark) ライト派でも差分確認
+    "pkief.material-icon-theme", // アイコン改善
+    // Productivity
+    "ms-azuretools.vscode-docker", // 将来のコンテナ化学習
+    "humao.rest-client" // APIテスト
+  ]
+}

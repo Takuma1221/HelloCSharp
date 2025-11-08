@@ -1,0 +1,5 @@
+body { font-family: system-ui, sans-serif; margin:0; }
+header nav { background:#222; color:#fff; padding:0.5rem 1rem; }
+header nav a { color:#fff; text-decoration:none; margin-right:1rem; }
+.content { padding:1rem; }
+footer { text-align:center; padding:1rem; background:#f5f5f5; margin-top:2rem; }
