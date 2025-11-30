@@ -34,3 +34,6 @@ wwwroot/lib/
 *.log
 *.swp
 *~
+
+node_modules/
+wwwroot/

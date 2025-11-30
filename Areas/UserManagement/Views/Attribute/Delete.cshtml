@@ -1,0 +1,68 @@
+@model AttributeDefinition
+
+@{
+    ViewData["Title"] = "属性削除";
+}
+
+<h2>🗑️ @ViewData["Title"]</h2>
+
+<hr />
+
+<div class="alert alert-warning">
+    <strong>警告:</strong> この属性を削除すると、この属性に関連するすべてのユーザー属性値も削除されます。
+</div>
+
+<div class="card">
+    <div class="card-header">
+        削除する属性
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">ID</dt>
+            <dd class="col-sm-9">@Model.Id</dd>
+
+            <dt class="col-sm-3">属性名</dt>
+            <dd class="col-sm-9">@Model.AttributeName</dd>
+
+            <dt class="col-sm-3">データ型</dt>
+            <dd class="col-sm-9">
+                @if (Model.DataType == "Text")
+                {
+                    <span class="badge bg-primary">文字列</span>
+                }
+                else if (Model.DataType == "Number")
+                {
+                    <span class="badge bg-success">数値</span>
+                }
+                else if (Model.DataType == "Date")
+                {
+                    <span class="badge bg-info">日付</span>
+                }
+            </dd>
+
+            <dt class="col-sm-3">必須</dt>
+            <dd class="col-sm-9">@(Model.IsRequired ? "はい" : "いいえ")</dd>
+
+            <dt class="col-sm-3">表示順</dt>
+            <dd class="col-sm-9">@Model.DisplayOrder</dd>
+
+            <dt class="col-sm-3">使用中のデータ数</dt>
+            <dd class="col-sm-9">
+                @if (Model.UserAttributeValues.Any())
+                {
+                    <span class="badge bg-danger">@Model.UserAttributeValues.Count 件のデータが削除されます</span>
+                }
+                else
+                {
+                    <span class="badge bg-secondary">0 件</span>
+                }
+            </dd>
+        </dl>
+    </div>
+</div>
+
+<form asp-action="Delete" method="post" class="mt-3">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">削除する</button>
+    <a asp-action="Index" class="btn btn-secondary">キャンセル</a>
+</form>

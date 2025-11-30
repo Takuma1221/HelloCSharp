@@ -1,0 +1,158 @@
+@{
+    ViewData["Title"] = "属性管理";
+}
+
+<!-- トースト通知コンテナ -->
+<div id="toast-container" class="toast-container position-fixed top-0 end-0 p-3"></div>
+
+<!-- ローディングオーバーレイ -->
+<div id="loading-overlay" class="loading-overlay" style="display: none;">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+</div>
+
+<!-- メインコンテンツ -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>📋 属性管理</h2>
+    <button id="btn-create" class="btn btn-primary">
+        ➕ 新規作成
+    </button>
+</div>
+
+<!-- 属性一覧テーブル -->
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>ID</th>
+                <th>属性名</th>
+                <th>データ型</th>
+                <th>表示順</th>
+                <th>必須</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody id="attribute-table-body">
+            <!-- TypeScript がここに行を描画 -->
+            <tr>
+                <td colspan="6" class="text-center text-muted py-4">
+                    読み込み中...
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- モーダル -->
+<div id="attribute-modal" class="modal-overlay">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="modal-title" class="modal-title">属性</h5>
+                <button type="button" id="btn-cancel" class="btn-close"></button>
+            </div>
+            <form id="attribute-form">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="attributeName" class="form-label">属性名</label>
+                        <input type="text" class="form-control" id="attributeName" name="attributeName" 
+                               placeholder="例: 血液型" required maxlength="50">
+                    </div>
+                    <div class="mb-3">
+                        <label for="dataType" class="form-label">データ型</label>
+                        <select class="form-select" id="dataType" name="dataType" required>
+                            <option value="Text">文字列 (Text)</option>
+                            <option value="Number">数値 (Number)</option>
+                            <option value="Date">日付 (Date)</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="displayOrder" class="form-label">表示順</label>
+                        <input type="number" class="form-control" id="displayOrder" name="displayOrder" 
+                               value="1" min="1" max="999" required>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input type="checkbox" class="form-check-input" id="isRequired" name="isRequired">
+                        <label class="form-check-label" for="isRequired">必須</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btn-modal-cancel" class="btn btn-secondary" onclick="document.getElementById('btn-cancel').click()">キャンセル</button>
+                    <button type="submit" class="btn btn-primary">保存</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- 属性管理用TypeScript（モジュール形式） -->
+    <script type="module" src="/js/pages/attributeIndex.js"></script>
+}
+
+<style>
+    /* モーダルオーバーレイ */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1050;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-overlay.show {
+        display: flex;
+    }
+
+    .modal-dialog {
+        width: 100%;
+        max-width: 500px;
+        margin: 1.75rem auto;
+    }
+
+    .modal-content {
+        background-color: #fff;
+        border-radius: 0.5rem;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .modal-body {
+        padding: 1rem;
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+        padding: 1rem;
+        border-top: 1px solid #dee2e6;
+    }
+
+    /* ローディングオーバーレイ */
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(255, 255, 255, 0.8);
+        z-index: 1060;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
