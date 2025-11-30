@@ -6,13 +6,6 @@ public class HomeController : Controller
 {
     public IActionResult Index()
     {
-        ViewData["Message"] = "ASP.NET Core MVCへようこそ";
-        return View();
-    }
-
-    public IActionResult About()
-    {
-        ViewData["Message"] = "このアプリは学習用の最小MVCサンプルです";
         return View();
     }
 

@@ -1,5 +1,83 @@
 @{
-    ViewData["Title"] = "Home";
+    ViewData["Title"] = "ホーム";
 }
-<h1>@ViewData["Message"]</h1>
-<p>Views/Home/Index.cshtml を編集して学習を進めてください。</p>
+
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="text-center mb-5">
+            <h1 class="display-5">👥 EAVユーザー管理システム</h1>
+            <p class="lead text-muted">Entity-Attribute-Value モデルを使った動的なユーザー管理</p>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">📖 このアプリについて</h5>
+            </div>
+            <div class="card-body">
+                <p>
+                    このアプリは <strong>EAV（Entity-Attribute-Value）モデル</strong> を学習するために作成されたサンプルです。
+                    会社のシステムで使われている <code>user_attribute_value</code> のような構造を、
+                    ASP.NET Core + React で実装しています。
+                </p>
+                <p class="mb-0">
+                    ユーザーに紐づく属性（年齢、部署、役職など）を動的に追加・管理できます。
+                </p>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-md-6">
+                <div class="card h-100 border-primary">
+                    <div class="card-body">
+                        <h5 class="card-title">📋 属性管理</h5>
+                        <p class="card-text text-muted">
+                            ユーザーに設定できる属性（項目）を定義します。<br>
+                            データ型（文字列/数値/日付）や必須設定が可能です。
+                        </p>
+                        <a href="/UserManagement/Attribute" class="btn btn-primary">属性管理へ →</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100 border-success">
+                    <div class="card-body">
+                        <h5 class="card-title">👤 ユーザー管理</h5>
+                        <p class="card-text text-muted">
+                            ユーザーを登録し、定義した属性の値を設定します。<br>
+                            動的なフォームで柔軟に管理できます。
+                        </p>
+                        <a href="/UserManagement/User" class="btn btn-success">ユーザー管理へ →</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">🛠️ 技術スタック</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>バックエンド</h6>
+                        <ul class="list-unstyled">
+                            <li>✅ ASP.NET Core MVC</li>
+                            <li>✅ Entity Framework Core</li>
+                            <li>✅ SQLite</li>
+                            <li>✅ Web API (RESTful)</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>フロントエンド</h6>
+                        <ul class="list-unstyled">
+                            <li>✅ React 19</li>
+                            <li>✅ TypeScript</li>
+                            <li>✅ Bootstrap 5</li>
+                            <li>✅ esbuild</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

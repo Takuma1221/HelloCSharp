@@ -1,6 +1,8 @@
 import type { AttributeDefinition, AttributeFormData } from './types';
 
-const API_BASE = '/api/UserManagement/AttributeApi';
+// 生SQL版のエンドポイントに変更
+// const API_BASE = '/api/UserManagement/AttributeApi';  // EF Core版
+const API_BASE = '/api/UserManagement/AttributeSql';     // 生SQL版
 
 /**
  * 属性API - fetchを使ったシンプルな実装

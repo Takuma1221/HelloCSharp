@@ -7,8 +7,10 @@
     "doc": "docs"
   },
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc --watch",
+    "build": "esbuild Scripts/react/App.tsx --bundle --outfile=wwwroot/js/react/attribute-app.js --minify",
+    "build:dev": "esbuild Scripts/react/App.tsx --bundle --outfile=wwwroot/js/react/attribute-app.js --sourcemap",
+    "watch": "esbuild Scripts/react/App.tsx --bundle --outfile=wwwroot/js/react/attribute-app.js --sourcemap --watch",
+    "build:ts": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
