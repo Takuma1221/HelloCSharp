@@ -14,6 +14,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 // Add Application Services
 builder.Services.AddScoped<IAttributeService, AttributeService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserAttributeValueService, UserAttributeValueService>();
 
 var app = builder.Build();
 

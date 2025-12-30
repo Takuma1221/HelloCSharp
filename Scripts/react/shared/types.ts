@@ -28,3 +28,41 @@ export interface ApiError {
     id?: number;
     usageCount?: number;
 }
+
+/**
+ * ユーザーの型（APIレスポンスの形式）
+ */
+export interface User {
+    id: number;
+    name: string;
+    email: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+/**
+ * ユーザー作成/更新リクエストの型
+ */
+export interface UserFormData {
+    name: string;
+    email: string;
+}
+
+/**
+ * ユーザー属性値の型
+ */
+export interface UserAttributeValue {
+    id: number;
+    userId: number;
+    attributeId: number;
+    value: string;
+    createdAt: string;
+    updatedAt: string;
+}
+
+/**
+ * ユーザー詳細（属性値含む）
+ */
+export interface UserWithAttributes extends User {
+    attributeValues: Record<number, string>; // { attributeId: value }
+}
