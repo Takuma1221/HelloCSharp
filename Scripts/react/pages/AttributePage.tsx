@@ -1,17 +1,17 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AttributeTable } from './components/AttributeTable';
-import { AttributeModal } from './components/AttributeModal';
-import { ToastContainer, useToast } from './components/Toast';
-import { LoadingOverlay } from './components/Loading';
-import { attributeApi } from './api';
-import type { AttributeDefinition, AttributeFormData } from './types';
+import { AttributeTable } from '../components/AttributeTable';
+import { AttributeModal } from '../components/AttributeModal';
+import { ToastContainer, useToast } from '../components/Toast';
+import { LoadingOverlay } from '../components/Loading';
+import { attributeApi } from '../shared/api';
+import type { AttributeDefinition, AttributeFormData } from '../shared/types';
 
 /**
- * 属性管理アプリケーションのメインコンポーネント
+ * 属性管理ページコンポーネント
  * すべての状態管理とイベント処理を担当
  */
-const AttributeApp: React.FC = () => {
+const AttributePage: React.FC = () => {
     // 状態管理
     const [attributes, setAttributes] = useState<AttributeDefinition[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -148,5 +148,5 @@ const AttributeApp: React.FC = () => {
 const container = document.getElementById('react-root');
 if (container) {
     const root = createRoot(container);
-    root.render(<AttributeApp />);
+    root.render(<AttributePage />);
 }

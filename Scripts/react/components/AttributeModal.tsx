@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import type { AttributeDefinition, AttributeFormData } from '../types';
+import type { AttributeDefinition, AttributeFormData } from '../shared/types';
 
 interface Props {
     isOpen: boolean;

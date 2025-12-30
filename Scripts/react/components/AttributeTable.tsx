@@ -1,5 +1,5 @@
 import React from 'react';
-import type { AttributeDefinition } from '../types';
+import type { AttributeDefinition } from '../shared/types';
 
 interface Props {
     attributes: AttributeDefinition[];

@@ -7,9 +7,14 @@
     "doc": "docs"
   },
   "scripts": {
-    "build": "esbuild Scripts/react/App.tsx --bundle --outfile=wwwroot/js/react/attribute-app.js --minify",
-    "build:dev": "esbuild Scripts/react/App.tsx --bundle --outfile=wwwroot/js/react/attribute-app.js --sourcemap",
-    "watch": "esbuild Scripts/react/App.tsx --bundle --outfile=wwwroot/js/react/attribute-app.js --sourcemap --watch",
+    "build": "npm run build:home && npm run build:attribute",
+    "build:dev": "npm run build:home:dev && npm run build:attribute:dev",
+    "build:home": "esbuild Scripts/react/pages/HomePage.tsx --bundle --outfile=wwwroot/js/react/home-page.js --minify",
+    "build:home:dev": "esbuild Scripts/react/pages/HomePage.tsx --bundle --outfile=wwwroot/js/react/home-page.js --sourcemap",
+    "build:attribute": "esbuild Scripts/react/pages/AttributePage.tsx --bundle --outfile=wwwroot/js/react/attribute-page.js --minify",
+    "build:attribute:dev": "esbuild Scripts/react/pages/AttributePage.tsx --bundle --outfile=wwwroot/js/react/attribute-page.js --sourcemap",
+    "watch:home": "esbuild Scripts/react/pages/HomePage.tsx --bundle --outfile=wwwroot/js/react/home-page.js --sourcemap --watch",
+    "watch:attribute": "esbuild Scripts/react/pages/AttributePage.tsx --bundle --outfile=wwwroot/js/react/attribute-page.js --sourcemap --watch",
     "build:ts": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
