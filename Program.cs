@@ -7,6 +7,7 @@ using Serilog;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using HelloCSharp.Validators;
+using HelloCSharp.Infrastructure.Behaviors;
 
 // Serilog設定
 Log.Logger = new LoggerConfiguration()
@@ -26,9 +27,17 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
 
-// MediatR を追加
-builder.Services.AddMediatR(cfg => 
-    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly));
+// MediatR を追加（Pipeline Behavior付き）
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
+    
+    // Pipeline Behaviorを登録（実行順序重要: 外側から内側へ）
+    cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));           // 1. ロギング
+    cfg.AddOpenBehavior(typeof(ExceptionHandlingBehavior<,>)); // 2. 例外ハンドリング
+    cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));        // 3. バリデーション
+    cfg.AddOpenBehavior(typeof(PerformanceBehavior<,>));       // 4. パフォーマンス計測
+});
 
 // Add DbContext (SQLite)
 builder.Services.AddDbContext<AppDbContext>(options =>
