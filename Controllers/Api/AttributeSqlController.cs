@@ -1,43 +1,47 @@
 using HelloCSharp.Models;
-using HelloCSharp.Services;
+using HelloCSharp.Features.Attributes.Commands;
+using HelloCSharp.Features.Attributes.Queries;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HelloCSharp.Controllers.Api;
 
 /// <summary>
-/// 属性管理のWeb API Controller（サービス層使用版）
-/// ビジネスロジックはAttributeServiceに委譲
+/// 属性管理のWeb API Controller（CQRS + MediatR版）
+/// ビジネスロジックはHandlerに委譲
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class AttributeSqlController : ControllerBase
 {
-    private readonly IAttributeService _attributeService;
+    private readonly IMediator _mediator;
 
-    public AttributeSqlController(IAttributeService attributeService)
+    public AttributeSqlController(IMediator mediator)
     {
-        _attributeService = attributeService;
+        _mediator = mediator;
     }
 
     /// <summary>
     /// 属性一覧を取得
-    /// GET: /api/UserManagement/AttributeSql
+    /// GET: /api/AttributeSql
     /// </summary>
     [HttpGet]
     public async Task<ActionResult<IEnumerable<AttributeDefinition>>> GetAll()
     {
-        var attributes = await _attributeService.GetAllAsync();
+        var query = new GetAllAttributesQuery();
+        var attributes = await _mediator.Send(query);
         return Ok(attributes);
     }
 
     /// <summary>
     /// 特定の属性を取得
-    /// GET: /api/UserManagement/AttributeSql/5
+    /// GET: /api/AttributeSql/5
     /// </summary>
     [HttpGet("{id}")]
     public async Task<ActionResult<AttributeDefinition>> GetById(int id)
     {
-        var attribute = await _attributeService.GetByIdAsync(id);
+        var query = new GetAttributeByIdQuery(id);
+        var attribute = await _mediator.Send(query);
         
         if (attribute == null)
         {
@@ -49,34 +53,28 @@ public class AttributeSqlController : ControllerBase
 
     /// <summary>
     /// 新規属性を作成
-    /// POST: /api/UserManagement/AttributeSql
+    /// POST: /api/AttributeSql
     /// </summary>
     [HttpPost]
-    public async Task<ActionResult<AttributeDefinition>> Create([FromBody] AttributeDefinition attribute)
+    public async Task<ActionResult<AttributeDefinition>> Create([FromBody] CreateAttributeCommand command)
     {
         if (!ModelState.IsValid)
         {
             return BadRequest(ModelState);
         }
 
-        // 属性名の重複チェック
-        if (await _attributeService.ExistsAsync(attribute.AttributeName))
-        {
-            return BadRequest(new { message = "同じ属性名が既に存在します" });
-        }
-
-        var created = await _attributeService.CreateAsync(attribute);
+        var created = await _mediator.Send(command);
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 
     /// <summary>
     /// 属性を更新
-    /// PUT: /api/UserManagement/AttributeSql/5
+    /// PUT: /api/AttributeSql/5
     /// </summary>
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, [FromBody] AttributeDefinition attribute)
+    public async Task<IActionResult> Update(int id, [FromBody] UpdateAttributeCommand command)
     {
-        if (id != attribute.Id)
+        if (id != command.Id)
         {
             return BadRequest(new { message = "IDが一致しません" });
         }
@@ -86,30 +84,25 @@ public class AttributeSqlController : ControllerBase
             return BadRequest(ModelState);
         }
 
-        // 属性名の重複チェック（自分以外）
-        if (await _attributeService.ExistsAsync(attribute.AttributeName, id))
-        {
-            return BadRequest(new { message = "同じ属性名が既に存在します" });
-        }
-
-        var success = await _attributeService.UpdateAsync(attribute);
+        var updated = await _mediator.Send(command);
         
-        if (!success)
+        if (updated == null)
         {
             return NotFound(new { message = "属性が見つかりません", id });
         }
 
-        return Ok(attribute);
+        return Ok(updated);
     }
 
     /// <summary>
     /// 属性を削除
-    /// DELETE: /api/UserManagement/AttributeSql/5
+    /// DELETE: /api/AttributeSql/5
     /// </summary>
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var success = await _attributeService.DeleteAsync(id);
+        var command = new DeleteAttributeCommand(id);
+        var success = await _mediator.Send(command);
         
         if (!success)
         {
