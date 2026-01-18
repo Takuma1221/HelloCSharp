@@ -8,18 +8,42 @@ HelloCSharp/
 ├── 📂 Areas/UserManagement/          # ユーザー管理機能（EAVモデル）
 │   ├── Controllers/
 │   │   ├── AttributeController.cs    # View返却用（HTML返す）
+│   │   ├── UserController.cs         # View返却用（HTML返す）
 │   │   └── Api/
+│   │       ├── AttributeSqlController.cs   # Web API（生SQL版・現在使用中）
+│   │       ├── UserSqlController.cs        # Web API（生SQL版・現在使用中）
+│   │       ├── UserAttributeValueController.cs  # Web API（属性値）
 │   │       ├── AttributeApiController.cs   # Web API（EF Core版・参考用）
-│   │       └── AttributeSqlController.cs   # Web API（生SQL版・現在使用中）
+│   │       └── UserApiController.cs        # Web API（EF Core版・参考用）
+│   │
 │   ├── Models/
 │   │   ├── User.cs                   # ユーザーエンティティ
 │   │   ├── AttributeDefinition.cs    # 属性定義エンティティ
 │   │   └── UserAttributeValue.cs     # ユーザー属性値エンティティ
+│   │
+│   ├── Repositories/                 # 【データアクセス層】
+│   │   ├── IUserRepository.cs
+│   │   ├── UserRepository.cs
+│   │   ├── IAttributeRepository.cs
+│   │   ├── AttributeRepository.cs
+│   │   ├── IUserAttributeValueRepository.cs
+│   │   └── UserAttributeValueRepository.cs
+│   │
+│   ├── Services/                     # 【ビジネスロジック層】
+│   │   ├── IUserService.cs
+│   │   ├── UserService.cs
+│   │   ├── IAttributeService.cs
+│   │   ├── AttributeService.cs
+│   │   ├── IUserAttributeValueService.cs
+│   │   └── UserAttributeValueService.cs
+│   │
 │   └── Views/
 │       ├── _ViewImports.cshtml
 │       ├── _ViewStart.cshtml
-│       └── Attribute/
-│           └── Index.cshtml          # → AttributePage.tsx
+│       ├── Attribute/
+│       │   └── Index.cshtml          # → AttributePage.tsx
+│       └── User/
+│           └── Index.cshtml          # → UserPage.tsx
 │
 ├── 📂 Controllers/                   # ルートコントローラー
 │   └── HomeController.cs             # ホーム画面

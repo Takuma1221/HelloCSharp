@@ -20,15 +20,17 @@ ASP.NET Core MVC の基礎を学ぶための実践的なサンプルプロジェ
    - BMI判定（やせ型・普通・肥満）
    - ViewModel パターンの実装
 
-#### Areas/TodoApp（データベース連携）
+#### Areas/UserManagement（EAVモデル）
 
-3. **ユーザー管理システム** (`/UserManagement/User`, `/UserManagement/Attribute`) - 実装予定
-   - Entity Framework Core + SQLite
-   - **EAVモデル**（Entity-Attribute-Value）
-   - 動的スキーマ設計
+3. **ユーザー管理システム** (`/UserManagement/User`, `/UserManagement/Attribute`)
+   - **EAVモデル**（Entity-Attribute-Value）実装済み
+   - React 19 + TypeScript フロントエンド
+   - 生SQL（Microsoft.Data.Sqlite）によるデータアクセス
+   - **リポジトリパターン**採用
    - 複雑なリレーション（1対多×2）
    - CRUD操作（作成・読取・更新・削除）
    - 非同期処理（async/await）
+   - RESTful API 設計
 
 ## 🚀 開始方法
 
@@ -80,24 +82,33 @@ dotnet run
 
 ```
 HelloCSharp/
-├── Areas/                  # Area機能（機能別分離）
-│   ├── Samples/           # 基礎学習サンプル
-│   │   ├── Controllers/   # Calculator, Bmi
-│   │   ├── Models/        # ViewModels
-│   │   └── Views/         # Razor Views
-│   └── UserManagement/    # ユーザー管理システム（EAVモデル）
-│       ├── Controllers/   # User, Attribute
-│       ├── Models/        # Entity, ViewModels
-│       └── Views/         # CRUD Views
-├── Controllers/           # ルートコントローラー
-│   └── HomeController.cs  # Home, About
-├── Data/                  # DbContext（DB設定）
+├── Areas/                     # Area機能（機能別分離）
+│   ├── Samples/              # 基礎学習サンプル
+│   │   ├── Controllers/      # Calculator, Bmi
+│   │   ├── Models/           # ViewModels
+│   │   └── Views/            # Razor Views
+│   └── UserManagement/       # ユーザー管理システム（EAVモデル）
+│       ├── Controllers/      # View用, API用
+│       │   └── Api/          # RESTful API
+│       ├── Models/           # Entity（User, Attribute, UserAttributeValue）
+│       ├── Repositories/     # データアクセス層（生SQL）
+│       ├── Services/         # ビジネスロジック層
+│       └── Views/            # React マウント用 HTML
+├── Scripts/                  # TypeScript/React ソース
+│   └── react/
+│       ├── pages/            # ページコンポーネント
+│       ├── components/       # 再利用可能なUIコンポーネント
+│       └── shared/           # API通信、型定義
+├── Controllers/              # ルートコントローラー
+│   └── HomeController.cs     # Home, About
+├── Data/                     # DbContext（参考用）
 │   └── AppDbContext.cs
-├── Models/                # 共通モデル（必要に応じて）
-├── Views/                 # ルートビュー
+├── Models/                   # 共通モデル（必要に応じて）
+├── Views/                    # ルートビュー
 │   ├── Home/
-│   └── Shared/           # _Layout など
-├── wwwroot/              # 静的ファイル
+│   └── Shared/              # _Layout など
+├── wwwroot/                  # 静的ファイル
+│   └── js/react/            # ビルド済みReactバンドル
 │   ├── css/
 │   └── js/
 ├── docs/                 # ドキュメント
