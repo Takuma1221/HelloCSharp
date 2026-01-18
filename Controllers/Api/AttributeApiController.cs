@@ -1,17 +1,16 @@
-using HelloCSharp.Areas.UserManagement.Models;
+using HelloCSharp.Models;
 using HelloCSharp.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace HelloCSharp.Areas.UserManagement.Controllers.Api;
+namespace HelloCSharp.Controllers.Api;
 
 /// <summary>
 /// 属性管理のWeb API Controller
 /// RESTful APIとしてJSON形式でデータをやり取りする
 /// </summary>
-[Area("UserManagement")]
 [ApiController]
-[Route("api/[area]/[controller]")]  // => /api/UserManagement/Attribute
+[Route("api/[controller]")]  // => /api/UserManagement/Attribute
 public class AttributeApiController : ControllerBase
 {
     private readonly AppDbContext _context;

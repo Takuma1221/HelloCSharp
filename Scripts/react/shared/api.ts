@@ -1,8 +1,8 @@
 import type { AttributeDefinition, AttributeFormData, User, UserFormData, UserAttributeValue } from './types';
 
 // 生SQL版のエンドポイント
-const ATTRIBUTE_API_BASE = '/api/UserManagement/AttributeSql';
-const USER_API_BASE = '/api/UserManagement/UserSql';
+const ATTRIBUTE_API_BASE = '/api/AttributeSql';
+const USER_API_BASE = '/api/UserSql';
 
 /**
  * 属性API - fetchを使ったシンプルな実装

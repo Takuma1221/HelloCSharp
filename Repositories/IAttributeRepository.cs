@@ -1,6 +1,6 @@
-using HelloCSharp.Areas.UserManagement.Models;
+using HelloCSharp.Models;
 
-namespace HelloCSharp.Areas.UserManagement.Repositories;
+namespace HelloCSharp.Repositories;
 
 /// <summary>
 /// 属性リポジトリのインターフェース

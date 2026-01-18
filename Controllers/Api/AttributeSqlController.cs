@@ -1,16 +1,15 @@
-using HelloCSharp.Areas.UserManagement.Models;
-using HelloCSharp.Areas.UserManagement.Services;
+using HelloCSharp.Models;
+using HelloCSharp.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HelloCSharp.Areas.UserManagement.Controllers.Api;
+namespace HelloCSharp.Controllers.Api;
 
 /// <summary>
 /// 属性管理のWeb API Controller（サービス層使用版）
 /// ビジネスロジックはAttributeServiceに委譲
 /// </summary>
-[Area("UserManagement")]
 [ApiController]
-[Route("api/[area]/[controller]")]
+[Route("api/[controller]")]
 public class AttributeSqlController : ControllerBase
 {
     private readonly IAttributeService _attributeService;

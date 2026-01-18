@@ -1,7 +1,7 @@
-using HelloCSharp.Areas.UserManagement.Models;
-using HelloCSharp.Areas.UserManagement.Repositories;
+using HelloCSharp.Models;
+using HelloCSharp.Repositories;
 
-namespace HelloCSharp.Areas.UserManagement.Services;
+namespace HelloCSharp.Services;
 
 /// <summary>
 /// ユーザー属性値サービス（リポジトリパターン）

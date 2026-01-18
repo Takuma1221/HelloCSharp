@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace HelloCSharp.Areas.UserManagement.Controllers;
+namespace HelloCSharp.Controllers;
 
 /// <summary>
 /// 属性管理のViewコントローラー
@@ -11,7 +11,6 @@ namespace HelloCSharp.Areas.UserManagement.Controllers;
 /// - React: Scripts/react/pages/AttributePage.tsx
 /// - API: Controllers/Api/AttributeSqlController.cs
 /// </summary>
-[Area("UserManagement")]
 public class AttributeController : Controller
 {
     // GET: /UserManagement/Attribute

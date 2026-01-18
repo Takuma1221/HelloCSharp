@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace HelloCSharp.Areas.UserManagement.Models;
+namespace HelloCSharp.Models;
 
 /// <summary>
 /// ユーザー属性値エンティティ（EAVのValue部分）

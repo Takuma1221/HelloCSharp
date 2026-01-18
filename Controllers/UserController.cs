@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace HelloCSharp.Areas.UserManagement.Controllers;
+namespace HelloCSharp.Controllers;
 
 /// <summary>
 /// ユーザー管理のViewコントローラー
@@ -11,7 +11,6 @@ namespace HelloCSharp.Areas.UserManagement.Controllers;
 /// - React: Scripts/react/pages/UserPage.tsx
 /// - API: Controllers/Api/UserSqlController.cs
 /// </summary>
-[Area("UserManagement")]
 public class UserController : Controller
 {
     // GET: /UserManagement/User

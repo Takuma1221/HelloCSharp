@@ -1,7 +1,7 @@
-using HelloCSharp.Areas.UserManagement.Models;
+using HelloCSharp.Models;
 using Microsoft.Data.Sqlite;
 
-namespace HelloCSharp.Areas.UserManagement.Repositories;
+namespace HelloCSharp.Repositories;
 
 /// <summary>
 /// ユーザーリポジトリ（生SQL実装）

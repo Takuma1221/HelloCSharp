@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using HelloCSharp.Areas.UserManagement.Models;
+using HelloCSharp.Models;
 
 namespace HelloCSharp.Data;
 

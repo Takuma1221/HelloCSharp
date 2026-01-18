@@ -1,15 +1,14 @@
-using HelloCSharp.Areas.UserManagement.Models;
-using HelloCSharp.Areas.UserManagement.Services;
+using HelloCSharp.Models;
+using HelloCSharp.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HelloCSharp.Areas.UserManagement.Controllers.Api;
+namespace HelloCSharp.Controllers.Api;
 
 /// <summary>
 /// ユーザー属性値のWeb API Controller
 /// </summary>
-[Area("UserManagement")]
 [ApiController]
-[Route("api/[area]/[controller]")]
+[Route("api/[controller]")]
 public class UserAttributeValueController : ControllerBase
 {
     private readonly IUserAttributeValueService _service;

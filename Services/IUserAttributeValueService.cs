@@ -1,6 +1,6 @@
-using HelloCSharp.Areas.UserManagement.Models;
+using HelloCSharp.Models;
 
-namespace HelloCSharp.Areas.UserManagement.Services;
+namespace HelloCSharp.Services;
 
 /// <summary>
 /// ユーザー属性値サービスのインターフェース

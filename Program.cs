@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using HelloCSharp.Data;
-using HelloCSharp.Areas.UserManagement.Services;
-using HelloCSharp.Areas.UserManagement.Repositories;
+using HelloCSharp.Services;
+using HelloCSharp.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,11 +39,6 @@ app.UseRouting();
 
 // (Authentication can be added later) Authorization placeholder
 app.UseAuthorization();
-
-// Area routing
-app.MapControllerRoute(
-	name: "areas",
-	pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
 	name: "default",
