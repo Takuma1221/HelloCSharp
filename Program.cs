@@ -3,11 +3,28 @@ using Microsoft.EntityFrameworkCore;
 using HelloCSharp.Data;
 using HelloCSharp.Services;
 using HelloCSharp.Repositories;
+using Serilog;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using HelloCSharp.Validators;
+
+// Serilog設定
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File("logs/app-.log", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 
+// SerilogをASP.NET Coreのログプロバイダーとして追加
+builder.Host.UseSerilog();
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// FluentValidation を追加
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<UserValidator>();
 
 // Add DbContext (SQLite)
 builder.Services.AddDbContext<AppDbContext>(options =>

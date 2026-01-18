@@ -35,6 +35,9 @@ wwwroot/lib/
 *.swp
 *~
 
+# Serilog
+logs/
+
 node_modules/
 wwwroot/
 
