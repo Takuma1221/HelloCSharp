@@ -109,7 +109,8 @@ HelloCSharp/
 | URL | cshtml | tsx (ページ) | js (出力) |
 |-----|--------|-------------|-----------|
 | `/` | `Views/Home/Index.cshtml` | `pages/HomePage.tsx` | `home-page.js` |
-| `/UserManagement/Attribute` | `Areas/.../Views/Attribute/Index.cshtml` | `pages/AttributePage.tsx` | `attribute-page.js` |
+| `/Attribute` | `Views/Attribute/Index.cshtml` | `pages/AttributePage.tsx` | `attribute-page.js` |
+| `/User` | `Views/User/Index.cshtml` | `pages/UserPage.tsx` | `user-page.js` |
 
 ### 命名規則
 

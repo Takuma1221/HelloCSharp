@@ -8,52 +8,43 @@ HelloCSharp/
 ├── HelloCSharp.db                      # SQLite データベース
 │
 ├── Controllers/
-│   └── HomeController.cs               # トップページ用
+│   ├── HomeController.cs               # トップページ用
+│   ├── AttributeController.cs          # 属性管理画面用
+│   ├── UserController.cs               # ユーザー管理画面用
+│   └── Api/
+│       ├── AttributeSqlController.cs   # ✅ API（生SQL版）
+│       ├── UserSqlController.cs        # ✅ API（生SQL版）
+│       ├── UserAttributeValueController.cs  # ✅ API（属性値）
+│       └── AttributeApiController.cs   # 📦 API（EF Core版・参考用）
 │
 ├── Data/
 │   └── AppDbContext.cs                 # EF Core DbContext（参考用）
 │
-├── Areas/
-│   └── UserManagement/                 # ユーザー管理エリア
-│       ├── Controllers/
-│       │   ├── AttributeController.cs  # View用（HTML返却）
-│       │   ├── UserController.cs       # View用（HTML返却）
-│       │   └── Api/
-│       │       ├── AttributeSqlController.cs   # ✅ API（生SQL版）
-│       │       ├── UserSqlController.cs        # ✅ API（生SQL版）
-│       │       ├── UserAttributeValueController.cs  # ✅ API（属性値）
-│       │       ├── AttributeApiController.cs   # 📦 API（EF Core版・参考用）
-│       │       └── UserApiController.cs        # 📦 API（EF Core版・参考用）
-│       │
-│       ├── Models/
-│       │   ├── User.cs                 # ユーザーエンティティ
-│       │   ├── AttributeDefinition.cs  # 属性定義エンティティ
-│       │   └── UserAttributeValue.cs   # 属性値エンティティ
-│       │
-│       ├── Repositories/               # 【データアクセス層】
-│       │   ├── IUserRepository.cs
-│       │   ├── UserRepository.cs       # 生SQL実装
-│       │   ├── IAttributeRepository.cs
-│       │   ├── AttributeRepository.cs  # 生SQL実装
-│       │   ├── IUserAttributeValueRepository.cs
-│       │   └── UserAttributeValueRepository.cs  # 生SQL実装
-│       │
-│       ├── Services/                   # 【ビジネスロジック層】
-│       │   ├── IUserService.cs
-│       │   ├── UserService.cs          # バリデーション、重複チェック等
-│       │   ├── IAttributeService.cs
-│       │   ├── AttributeService.cs     # DisplayOrder管理等
-│       │   ├── IUserAttributeValueService.cs
-│       │   └── UserAttributeValueService.cs  # 一括保存処理
-│       │
-│       └── Views/
-│           ├── Attribute/
-│           │   └── Index.cshtml        # React マウント用
-│           └── User/
-│               └── Index.cshtml        # React マウント用
+├── Models/
+│   ├── User.cs                         # ユーザーエンティティ
+│   ├── AttributeDefinition.cs          # 属性定義エンティティ
+│   └── UserAttributeValue.cs           # 属性値エンティティ
+│
+├── Repositories/                       # 【データアクセス層】
+│   ├── IUserRepository.cs
+│   ├── UserRepository.cs               # 生SQL実装
+│   ├── IAttributeRepository.cs
+│   ├── AttributeRepository.cs          # 生SQL実装
+│   ├── IUserAttributeValueRepository.cs
+│   └── UserAttributeValueRepository.cs  # 生SQL実装
+│
+├── Services/                           # 【ビジネスロジック層】
+│   ├── IUserService.cs
+│   ├── UserService.cs                  # バリデーション、重複チェック等
+│   ├── IAttributeService.cs
+│   ├── AttributeService.cs             # DisplayOrder管理等
+│   ├── IUserAttributeValueService.cs
+│   └── UserAttributeValueService.cs    # 一括保存処理
 │
 └── Views/
     ├── Home/Index.cshtml
+    ├── Attribute/Index.cshtml          # React マウント用
+    ├── User/Index.cshtml               # React マウント用
     └── Shared/_Layout.cshtml           # 共通レイアウト
 ```
 
@@ -78,7 +69,9 @@ HelloCSharp/
         ▼                       ▼                         ▼                         ▼
 ┌───────────────┐    ┌───────────────────┐    ┌─────────────────────┐    ┌─────────────────┐
 │HomeController │    │AttributeController│    │ UserSqlController   │    │AttributeApiController│
-│ /             │    │UserController     │    │ AttributeSqlController│  │(参考用)          │
+│ /             │    │/Attribute         │    │ AttributeSqlController│  │(参考用)          │
+│               │    │UserController     │    │                     │    │                 │
+│               │    │/User              │    │                     │    │                 │
 └───────────────┘    └───────────────────┘    └─────────────────────┘    └─────────────────┘
         │                       │                         │
         ▼                       ▼                         ▼
