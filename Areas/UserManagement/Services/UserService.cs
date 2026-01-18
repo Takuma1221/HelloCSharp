@@ -1,19 +1,22 @@
 using HelloCSharp.Areas.UserManagement.Models;
-using Microsoft.Data.Sqlite;
+using HelloCSharp.Areas.UserManagement.Repositories;
 
 namespace HelloCSharp.Areas.UserManagement.Services;
 
 /// <summary>
-/// ユーザー管理サービス（生SQL実装）
+/// ユーザー管理サービス（リポジトリパターン）
 /// </summary>
 public class UserService : IUserService
 {
-    private readonly string _connectionString;
+    private readonly IUserRepository _userRepository;
+    private readonly IUserAttributeValueRepository _userAttributeValueRepository;
 
-    public UserService(IConfiguration configuration)
+    public UserService(
+        IUserRepository userRepository,
+        IUserAttributeValueRepository userAttributeValueRepository)
     {
-        _connectionString = configuration.GetConnectionString("DefaultConnection") 
-            ?? "Data Source=HelloCSharp.db";
+        _userRepository = userRepository;
+        _userAttributeValueRepository = userAttributeValueRepository;
     }
 
     /// <summary>
@@ -21,36 +24,7 @@ public class UserService : IUserService
     /// </summary>
     public async Task<IEnumerable<User>> GetAllAsync()
     {
-        var users = new List<User>();
-
-        using (var connection = new SqliteConnection(_connectionString))
-        {
-            await connection.OpenAsync();
-
-            var command = connection.CreateCommand();
-            command.CommandText = @"
-                SELECT Id, Name, Email, CreatedAt, UpdatedAt
-                FROM Users
-                ORDER BY CreatedAt DESC
-            ";
-
-            using (var reader = await command.ExecuteReaderAsync())
-            {
-                while (await reader.ReadAsync())
-                {
-                    users.Add(new User
-                    {
-                        Id = reader.GetInt32(0),
-                        Name = reader.GetString(1),
-                        Email = reader.GetString(2),
-                        CreatedAt = DateTime.Parse(reader.GetString(3)),
-                        UpdatedAt = DateTime.Parse(reader.GetString(4))
-                    });
-                }
-            }
-        }
-
-        return users;
+        return await _userRepository.GetAllAsync();
     }
 
     /// <summary>
@@ -58,35 +32,7 @@ public class UserService : IUserService
     /// </summary>
     public async Task<User?> GetByIdAsync(int id)
     {
-        using (var connection = new SqliteConnection(_connectionString))
-        {
-            await connection.OpenAsync();
-
-            var command = connection.CreateCommand();
-            command.CommandText = @"
-                SELECT Id, Name, Email, CreatedAt, UpdatedAt
-                FROM Users
-                WHERE Id = @id
-            ";
-            command.Parameters.AddWithValue("@id", id);
-
-            using (var reader = await command.ExecuteReaderAsync())
-            {
-                if (await reader.ReadAsync())
-                {
-                    return new User
-                    {
-                        Id = reader.GetInt32(0),
-                        Name = reader.GetString(1),
-                        Email = reader.GetString(2),
-                        CreatedAt = DateTime.Parse(reader.GetString(3)),
-                        UpdatedAt = DateTime.Parse(reader.GetString(4))
-                    };
-                }
-            }
-        }
-
-        return null;
+        return await _userRepository.GetByIdAsync(id);
     }
 
     /// <summary>
@@ -94,28 +40,14 @@ public class UserService : IUserService
     /// </summary>
     public async Task<User> CreateAsync(User user)
     {
-        using (var connection = new SqliteConnection(_connectionString))
+        // ビジネスロジック: メール重複チェック
+        var existingUser = await _userRepository.GetByEmailAsync(user.Email);
+        if (existingUser != null)
         {
-            await connection.OpenAsync();
-
-            var command = connection.CreateCommand();
-            command.CommandText = @"
-                INSERT INTO Users (Name, Email, CreatedAt, UpdatedAt)
-                VALUES (@name, @email, @createdAt, @updatedAt);
-                SELECT last_insert_rowid();
-            ";
-            command.Parameters.AddWithValue("@name", user.Name);
-            command.Parameters.AddWithValue("@email", user.Email);
-            command.Parameters.AddWithValue("@createdAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-            command.Parameters.AddWithValue("@updatedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-
-            var newId = (long)(await command.ExecuteScalarAsync() ?? 0);
-            user.Id = (int)newId;
-            user.CreatedAt = DateTime.Now;
-            user.UpdatedAt = DateTime.Now;
+            throw new InvalidOperationException("このメールアドレスは既に使用されています");
         }
 
-        return user;
+        return await _userRepository.CreateAsync(user);
     }
 
     /// <summary>
@@ -123,51 +55,32 @@ public class UserService : IUserService
     /// </summary>
     public async Task<bool> UpdateAsync(User user)
     {
-        using (var connection = new SqliteConnection(_connectionString))
+        // ビジネスロジック: 存在チェック
+        var exists = await _userRepository.ExistsAsync(user.Id);
+        if (!exists)
         {
-            await connection.OpenAsync();
-
-            var command = connection.CreateCommand();
-            command.CommandText = @"
-                UPDATE Users
-                SET Name = @name,
-                    Email = @email,
-                    UpdatedAt = @updatedAt
-                WHERE Id = @id
-            ";
-            command.Parameters.AddWithValue("@id", user.Id);
-            command.Parameters.AddWithValue("@name", user.Name);
-            command.Parameters.AddWithValue("@email", user.Email);
-            command.Parameters.AddWithValue("@updatedAt", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-
-            var rowsAffected = await command.ExecuteNonQueryAsync();
-            return rowsAffected > 0;
+            return false;
         }
+
+        // ビジネスロジック: メール重複チェック（自分以外）
+        var existingUser = await _userRepository.GetByEmailAsync(user.Email);
+        if (existingUser != null && existingUser.Id != user.Id)
+        {
+            throw new InvalidOperationException("このメールアドレスは既に使用されています");
+        }
+
+        await _userRepository.UpdateAsync(user);
+        return true;
     }
 
     /// <summary>
-    /// ユーザーを削除
+    /// ユーザーを削除（関連する属性値も削除）
     /// </summary>
     public async Task<bool> DeleteAsync(int id)
     {
-        using (var connection = new SqliteConnection(_connectionString))
-        {
-            await connection.OpenAsync();
-
-            // まず関連するUserAttributeValuesを削除
-            var deleteValuesCommand = connection.CreateCommand();
-            deleteValuesCommand.CommandText = "DELETE FROM UserAttributeValues WHERE UserId = @id";
-            deleteValuesCommand.Parameters.AddWithValue("@id", id);
-            await deleteValuesCommand.ExecuteNonQueryAsync();
-
-            // ユーザーを削除
-            var deleteUserCommand = connection.CreateCommand();
-            deleteUserCommand.CommandText = "DELETE FROM Users WHERE Id = @id";
-            deleteUserCommand.Parameters.AddWithValue("@id", id);
-
-            var rowsAffected = await deleteUserCommand.ExecuteNonQueryAsync();
-            return rowsAffected > 0;
-        }
+        // ビジネスロジック: 関連データも削除
+        await _userAttributeValueRepository.DeleteByUserIdAsync(id);
+        return await _userRepository.DeleteAsync(id);
     }
 
     /// <summary>
@@ -175,30 +88,11 @@ public class UserService : IUserService
     /// </summary>
     public async Task<bool> EmailExistsAsync(string email, int? excludeId = null)
     {
-        using (var connection = new SqliteConnection(_connectionString))
+        var user = await _userRepository.GetByEmailAsync(email);
+        if (user == null)
         {
-            await connection.OpenAsync();
-
-            var command = connection.CreateCommand();
-            if (excludeId.HasValue)
-            {
-                command.CommandText = @"
-                    SELECT COUNT(*) FROM Users 
-                    WHERE Email = @email AND Id != @excludeId
-                ";
-                command.Parameters.AddWithValue("@excludeId", excludeId.Value);
-            }
-            else
-            {
-                command.CommandText = @"
-                    SELECT COUNT(*) FROM Users 
-                    WHERE Email = @email
-                ";
-            }
-            command.Parameters.AddWithValue("@email", email);
-
-            var count = (long)(await command.ExecuteScalarAsync() ?? 0);
-            return count > 0;
+            return false;
         }
+        return !excludeId.HasValue || user.Id != excludeId.Value;
     }
 }

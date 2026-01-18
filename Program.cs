@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using HelloCSharp.Data;
 using HelloCSharp.Areas.UserManagement.Services;
+using HelloCSharp.Areas.UserManagement.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,11 @@ builder.Services.AddControllersWithViews();
 // Add DbContext (SQLite)
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite("Data Source=HelloCSharp.db"));
+
+// Add Repositories
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IAttributeRepository, AttributeRepository>();
+builder.Services.AddScoped<IUserAttributeValueRepository, UserAttributeValueRepository>();
 
 // Add Application Services
 builder.Services.AddScoped<IAttributeService, AttributeService>();

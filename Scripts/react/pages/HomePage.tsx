@@ -1,3 +1,5 @@
+// repositryと属性管理とユーザ管理の紐付けを見る
+
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 
