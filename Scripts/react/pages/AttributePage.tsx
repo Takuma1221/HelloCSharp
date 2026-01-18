@@ -1,45 +1,54 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React from 'react';
 import { createRoot } from 'react-dom/client';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { Provider as JotaiProvider, useAtom } from 'jotai';
 import { AttributeTable } from '../components/AttributeTable';
 import { AttributeModal } from '../components/AttributeModal';
 import { ToastContainer, useToast } from '../components/Toast';
 import { LoadingOverlay } from '../components/Loading';
-import { attributeApi } from '../shared/api';
+import { queryClient } from '../shared/queryClient';
+import {
+    isModalOpenAtom,
+    editingAttributeAtom,
+    isLoadingAtom,
+} from '../shared/atoms';
+import {
+    useAttributes,
+    useCreateAttribute,
+    useUpdateAttribute,
+    useDeleteAttribute,
+} from '../shared/queries';
 import type { AttributeDefinition, AttributeFormData } from '../shared/types';
 
 /**
- * 属性管理ページコンポーネント
- * すべての状態管理とイベント処理を担当
+ * 属性管理ページコンポーネント（Phase 3強化版）
+ * - React Query: サーバーステート管理（キャッシュ、自動再取得）
+ * - Jotai: クライアントステート管理（Atoms）
+ * - TanStack Table: テーブル機能拡張（ソート、フィルタ、ページング）
  */
-const AttributePage: React.FC = () => {
-    // 状態管理
-    const [attributes, setAttributes] = useState<AttributeDefinition[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [editingAttribute, setEditingAttribute] = useState<AttributeDefinition | null>(null);
-    
+const AttributePageContent: React.FC = () => {
+    // Jotai atoms
+    const [isModalOpen, setIsModalOpen] = useAtom(isModalOpenAtom);
+    const [editingAttribute, setEditingAttribute] = useAtom(editingAttributeAtom);
+    const [isLoading, setIsLoading] = useAtom(isLoadingAtom);
+
+    // React Query hooks
+    const { data: attributes = [], isLoading: isQueryLoading } = useAttributes();
+    const createMutation = useCreateAttribute();
+    const updateMutation = useUpdateAttribute();
+    const deleteMutation = useDeleteAttribute();
+
     // トースト通知
     const { messages, showSuccess, showError, removeToast } = useToast();
 
-    /**
-     * 属性一覧を読み込み
-     */
-    const loadAttributes = useCallback(async () => {
-        try {
-            setIsLoading(true);
-            const data = await attributeApi.getAll();
-            setAttributes(data);
-        } catch (error) {
-            showError((error as Error).message);
-        } finally {
-            setIsLoading(false);
-        }
-    }, []);
-
-    // 初回読み込み
-    useEffect(() => {
-        loadAttributes();
-    }, [loadAttributes]);
+    // ローディング状態を統合
+    const isAnyLoading =
+        isLoading ||
+        isQueryLoading ||
+        createMutation.isPending ||
+        updateMutation.isPending ||
+        deleteMutation.isPending;
 
     /**
      * 新規作成モーダルを開く
@@ -72,14 +81,16 @@ const AttributePage: React.FC = () => {
         try {
             setIsLoading(true);
             if (editingAttribute) {
-                await attributeApi.update(editingAttribute.id, data);
+                await updateMutation.mutateAsync({
+                    id: editingAttribute.id,
+                    data,
+                });
                 showSuccess('属性を更新しました');
             } else {
-                await attributeApi.create(data);
+                await createMutation.mutateAsync(data);
                 showSuccess('属性を作成しました');
             }
             handleCloseModal();
-            await loadAttributes();
         } catch (error) {
             showError((error as Error).message);
         } finally {
@@ -100,9 +111,8 @@ const AttributePage: React.FC = () => {
 
         try {
             setIsLoading(true);
-            await attributeApi.delete(id);
+            await deleteMutation.mutateAsync(id);
             showSuccess('属性を削除しました');
-            await loadAttributes();
         } catch (error) {
             showError((error as Error).message);
         } finally {
@@ -116,7 +126,7 @@ const AttributePage: React.FC = () => {
             <ToastContainer messages={messages} onRemove={removeToast} />
 
             {/* ローディング */}
-            <LoadingOverlay isLoading={isLoading} />
+            <LoadingOverlay isLoading={isAnyLoading} />
 
             {/* ヘッダー */}
             <div className="d-flex justify-content-between align-items-center mb-4">
@@ -126,7 +136,7 @@ const AttributePage: React.FC = () => {
                 </button>
             </div>
 
-            {/* 属性一覧テーブル */}
+            {/* 属性一覧テーブル（TanStack Table版） */}
             <AttributeTable
                 attributes={attributes}
                 onEdit={handleEdit}
@@ -141,6 +151,21 @@ const AttributePage: React.FC = () => {
                 onSubmit={handleSubmit}
             />
         </>
+    );
+};
+
+/**
+ * ルートコンポーネント（Providers）
+ */
+const AttributePage: React.FC = () => {
+    return (
+        <QueryClientProvider client={queryClient}>
+            <JotaiProvider>
+                <AttributePageContent />
+            </JotaiProvider>
+            {/* 開発用React Query DevTools */}
+            <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
     );
 };
 

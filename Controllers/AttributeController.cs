@@ -8,26 +8,19 @@ namespace HelloCSharp.Controllers;
 /// 
 /// 対応関係:
 /// - View: Views/Attribute/Index.cshtml
-/// - React: Scripts/react/pages/AttributePage.tsx
+/// - React: Scripts/react/pages/AttributePage.tsx（Phase 3強化版）
 /// - API: Controllers/Api/AttributeSqlController.cs
 /// 
-/// Phase 3版（V2）:
-/// - View: Views/Attribute/IndexV2.cshtml
-/// - React: Scripts/react/pages/AttributePageV2.tsx
-/// - 使用技術: React Query + Jotai + TanStack Table
+/// Phase 3強化内容:
+/// - React Query: サーバーステート管理（キャッシュ、自動再取得）
+/// - Jotai: クライアントステート管理（Atoms）
+/// - TanStack Table: ソート、フィルタ、ページング
 /// </summary>
 public class AttributeController : Controller
 {
-    // GET: /UserManagement/Attribute
-    // React版の属性管理画面を返す
+    // GET: /Attribute
+    // Phase 3強化版 属性管理画面を返す
     public IActionResult Index()
-    {
-        return View();
-    }
-
-    // GET: /UserManagement/Attribute/IndexV2
-    // Phase 3強化版（React Query + Jotai + TanStack Table）
-    public IActionResult IndexV2()
     {
         return View();
     }

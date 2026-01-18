@@ -29,12 +29,17 @@ docs/
 
 | 領域 | 技術 |
 |------|------|
-| バックエンド | ASP.NET Core MVC, Web API |
-| ORM | Entity Framework Core |
+| バックエンド | ASP.NET Core MVC (.NET 9.0), Web API |
+| ORM | Entity Framework Core / 生SQL (Microsoft.Data.Sqlite) |
 | DB | SQLite |
 | フロントエンド | React 19, TypeScript |
+| 状態管理 | React Query, Jotai |
+| テーブルUI | TanStack Table |
 | UI | Bootstrap 5 |
 | ビルド | esbuild |
+| ログ | Serilog |
+| バリデーション | FluentValidation |
+| アーキテクチャ | CQRS (MediatR) |
 
 ---
 
@@ -49,27 +54,75 @@ docs/
 | `user-management/er-diagram.md` | テーブル設計、リレーション | ⭐⭐⭐⭐ |
 | `user-management/implementation-steps.md` | CRUD実装手順 | ⭐⭐⭐⭐⭐ |
 | `user-management/frontend-guide.md` | React + Web API | ⭐⭐⭐⭐ |
+| **段階的強化** |
+| `phase1-implementation.md` | Serilog + FluentValidation | ⭐⭐⭐ |
+| `phase2-implementation.md` | CQRS + MediatR + Pipeline Behaviors | ⭐⭐⭐⭐ |
+| `phase3-implementation.md` | React Query + Jotai + TanStack Table | ⭐⭐⭐⭐ |
 
 ---
 
 ## ✅ 実装状況
 
-### 完了
-- [x] プロジェクト構築（ASP.NET Core MVC）
-- [x] Entity Framework Core + SQLite セットアップ
-- [x] EAVモデルのEntity作成（User, Attribute, UserAttributeValue）
-- [x] AppDbContext + マイグレーション
-- [x] Web API（AttributeApiController）
-- [x] React版 属性管理CRUD
+### Phase 1: ログ & バリデーション基盤（完了）
+- [x] Serilog導入（構造化ログ、ファイル出力）
+- [x] FluentValidation導入（モデルバリデーション）
+- [x] 5つのバリデータ実装
+- [x] ModelState自動統合
+
+### Phase 2: CQRS + MediatR（完了）
+- [x] MediatR導入
+- [x] Command/Query分離
+- [x] Handlers実装（5種類）
+- [x] Pipeline Behaviors（Logging, Performance, Validation, Exception）
+- [x] AttributeSqlController → MediatR対応
+
+### Phase 3: フロントエンド強化（完了）
+- [x] React Query導入（サーバーステート管理）
+- [x] Jotai導入（クライアントステート管理）
+- [x] TanStack Table導入（ソート、フィルタ、ページング）
+- [x] AttributePageV2実装
+- [x] React Query DevTools統合
 
 ### 未実装
-- [ ] ユーザー管理CRUD（React版）
-- [ ] 動的フォーム生成（属性に応じた入力フォーム）
-- [ ] ユーザー詳細画面
+- [ ] ユーザー管理CRUDをPhase 3対応
+- [ ] Optimistic Updates
+- [ ] React Hook Form + Zod
+- [ ] Storybook導入
 
 ---
 
-## 📝 学習メモの作成方法
+## � クイックスタート
+
+### 開発サーバー起動
+
+```bash
+# バックエンド起動
+dotnet run
+# → http://localhost:5000
+
+# フロントエンド（別ターミナル）
+npm run watch:attribute  # 監視ビルド
+```
+
+### アクセス先
+
+| ページ | URL | 説明 |
+|--------|-----|------|
+| ホーム | http://localhost:5000 | トップページ |
+| **属性管理（Phase 3強化版）** | **http://localhost:5000/Attribute** | **最新版** |
+
+### ビルドコマンド
+
+```bash
+# フロントエンドビルド
+npm run build:attribute          # 本番ビルド
+npm run build:attribute:dev      # 開発ビルド（sourcemap付き）
+npm run watch:attribute          # 監視モード
+```
+
+---
+
+## �📝 学習メモの作成方法
 
 `docs/notes/`フォルダに自分の学習メモを追加できます：
 
@@ -93,18 +146,39 @@ docs/
 ## 🔗 クイックリンク
 
 ### プロジェクト内
-- [フォルダ構成](./architecture/folder-structure.md)
-- [EAV要件定義](./user-management/requirements.md)
-- [実装手順](./user-management/implementation-steps.md)
+- **段階的強化**
+  - [Phase 1: Serilog + FluentValidation](./docs/phase1-implementation.md)
+  - [Phase 2: CQRS + MediatR + Pipeline Behaviors](./docs/phase2-implementation.md)
+  - [Phase 3: React Query + Jotai + TanStack Table](./docs/phase3-implementation.md)
+- **設計・実装**
+  - [フォルダ構成](./docs/architecture/folder-structure.md)
+  - [EAV要件定義](./docs/user-management/requirements.md)
+  - [実装手順](./docs/user-management/implementation-steps.md)
 
 ### 外部リソース
 - [ASP.NET Core 公式ドキュメント](https://learn.microsoft.com/aspnet/core)
 - [Entity Framework Core](https://learn.microsoft.com/ef/core)
 - [React 公式](https://react.dev/)
+- [React Query (TanStack Query)](https://tanstack.com/query/latest)
+- [Jotai](https://jotai.org/)
+- [TanStack Table](https://tanstack.com/table/latest)
 
 ---
 
-## 📂 アーカイブについて
+## � 進化の歴史
+
+| フェーズ | 実装内容 | 主な効果 |
+|---------|---------|---------|
+| **初期** | ASP.NET Core MVC + React + SQLite | 基本CRUD完成 |
+| **Phase 1** | Serilog + FluentValidation | ログ基盤、バリデーション強化 |
+| **Phase 2** | CQRS + MediatR + Pipeline Behaviors | アーキテクチャ整理、Handler60%削減 |
+| **Phase 3** | React Query + Jotai + TanStack Table | キャッシュ、ソート/フィルタ、DevTools |
+
+詳細は各フェーズのドキュメントを参照してください。
+
+---
+
+## �📂 アーカイブについて
 
 学習初期に使用していたドキュメントは `../HelloCSharp_archive/docs/` に移動しています：
 - `samples/` - 電卓・BMIサンプルの解説
