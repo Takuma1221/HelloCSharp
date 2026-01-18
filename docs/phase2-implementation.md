@@ -543,11 +543,228 @@ Phase 2では、アプリケーションのアーキテクチャを**Clean Archi
 | スケーラビリティ | 低い | 高い | ✅ 向上 |
 | コードの行数 | Controller: 120行 | Controller: 60行 | ✅ 50%削減 |
 
-### 次のステップ（Phase 3候補）
+### 次のステップ
 
-- **User機能**: UserController にもCQRSパターンを適用
-- **React Query導入**: フロントエンドでもCQRSパターンを適用
-- **Jotai導入**: グローバルステート管理の改善
+Phase 2では、CQRS + MediatRに加えて、Pipeline Behaviorによる横断的関心事も実装しました。Phase 3ではフロントエンドの強化を行います。
+
+---
+
+## Pipeline Behavior（横断的関心事の実装）
+
+Phase 2の一環として、MediatR Pipeline Behaviorを導入し、すべてのCommand/Queryに対して横断的関心事を自動適用しました。
+
+### 実装したBehaviors
+
+#### 1. LoggingBehavior - リクエストロギング
+
+すべてのリクエストの開始/完了/エラーを自動ログ出力：
+
+```csharp
+public class LoggingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+{
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken ct)
+    {
+        var requestName = typeof(TRequest).Name;
+        _logger.LogInformation("【開始】リクエスト: {RequestName} {@Request}", requestName, request);
+        
+        try
+        {
+            var response = await next();
+            _logger.LogInformation("【完了】リクエスト: {RequestName}", requestName);
+            return response;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "【エラー】リクエスト: {RequestName}", requestName);
+            throw;
+        }
+    }
+}
+```
+
+#### 2. PerformanceBehavior - パフォーマンス計測
+
+実行時間を自動計測、500ms超で警告：
+
+```csharp
+public class PerformanceBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+{
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken ct)
+    {
+        _timer.Start();
+        var response = await next();
+        _timer.Stop();
+
+        var elapsedMs = _timer.ElapsedMilliseconds;
+        if (elapsedMs > 500)
+            _logger.LogWarning("【低速】{Request} の実行に {ElapsedMs}ms", typeof(TRequest).Name, elapsedMs);
+        
+        return response;
+    }
+}
+```
+
+#### 3. ValidationBehavior - 自動バリデーション
+
+FluentValidationを自動実行：
+
+```csharp
+public class ValidationBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+{
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken ct)
+    {
+        var validationResults = await Task.WhenAll(
+            _validators.Select(v => v.ValidateAsync(new ValidationContext<TRequest>(request), ct)));
+
+        var failures = validationResults.SelectMany(r => r.Errors).Where(f => f != null).ToList();
+        if (failures.Any())
+            throw new ValidationException(failures);
+
+        return await next();
+    }
+}
+```
+
+#### 4. ExceptionHandlingBehavior - 例外ハンドリング
+
+例外の種類別に自動ハンドリング：
+
+```csharp
+public class ExceptionHandlingBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+{
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken ct)
+    {
+        try
+        {
+            return await next();
+        }
+        catch (ValidationException ex)
+        {
+            _logger.LogWarning("バリデーションエラー: {Errors}", string.Join(", ", ex.Errors));
+            throw;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "予期しないエラー: {Request}", typeof(TRequest).Name);
+            throw;
+        }
+    }
+}
+```
+
+### Program.csでの登録
+
+```csharp
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
+    
+    // Pipeline Behaviorを登録（実行順序: 外側から内側）
+    cfg.AddOpenBehavior(typeof(LoggingBehavior<,>));
+    cfg.AddOpenBehavior(typeof(ExceptionHandlingBehavior<,>));
+    cfg.AddOpenBehavior(typeof(ValidationBehavior<,>));
+    cfg.AddOpenBehavior(typeof(PerformanceBehavior<,>));
+});
+```
+
+### 実行フロー
+
+```
+Request
+  ↓
+1. LoggingBehavior（開始ログ）
+  ↓
+2. ExceptionHandlingBehavior（例外キャッチ）
+  ↓
+3. ValidationBehavior（バリデーション）
+  ↓
+4. PerformanceBehavior（計測開始）
+  ↓
+Handler（ビジネスロジック）
+  ↓
+4. PerformanceBehavior（計測終了）
+  ↓
+1. LoggingBehavior（完了ログ）
+  ↓
+Response
+```
+
+### ログ出力例
+
+```
+[12:57:50 INF] 【開始】リクエスト: CreateAttributeCommand {"AttributeName": "Phase3", ...}
+[12:57:50 INF] 属性定義を作成します: Phase3
+[12:57:50 INF] 属性定義を作成しました: ID=11, Name=Phase3
+[12:57:50 INF] 【パフォーマンス】リクエスト: CreateAttributeCommand 実行時間: 2ms
+[12:57:50 INF] 【完了】リクエスト: CreateAttributeCommand
+```
+
+### Pipeline Behaviorによる改善
+
+| 項目 | Before | After | 改善 |
+|------|--------|-------|------|
+| Handler行数 | 50行/個 | 20行/個 | ✅ 60%削減 |
+| ログコード | 各Handlerに重複 | Behavior 1箇所 | ✅ DRY |
+| パフォーマンス計測 | なし | 全自動 | ✅ 監視性 |
+| エラーハンドリング | 分散 | 一元化 | ✅ 保守性 |
+| コード重複 | 高い | なし | ✅ 品質 |
+
+---
+
+## Phase 2 まとめ
+
+Phase 2では、**CQRS + MediatR + Pipeline Behavior** を導入し、Clean Architectureに準拠したアーキテクチャを構築しました。
+
+### 主な成果
+
+1. **CQRS分離**: 読み取りと書き込みを明確に分離
+2. **薄いController**: HTTPリクエスト処理のみに集中
+3. **Handler軽量化**: ビジネスロジックのみに専念（60%削減）
+4. **横断的関心事の自動化**: ログ、バリデーション、エラー処理を一元化
+5. **監視性向上**: パフォーマンス計測を全自動化
+6. **テスタビリティ向上**: Handlerを独立してテスト可能
+
+### 最終的な Before → After 比較
+
+| 項目 | Phase 1 | Phase 2 | 改善 |
+|------|---------|---------|------|
+| アーキテクチャ | レイヤード | CQRS | ✅ 分離 |
+| Controller行数 | 120行 | 60行 | ✅ 50%削減 |
+| Handler行数 | - | 20行 | ✅ 軽量 |
+| 横断的関心事 | 分散 | 自動化 | ✅ 一元化 |
+| ログ | 手動 | 自動 | ✅ 統一 |
+| バリデーション | 各所 | Behavior | ✅ 分離 |
+| パフォーマンス計測 | なし | 自動 | ✅ 監視 |
+
+### ファイル構成
+
+```
+HelloCSharp/
+├── Program.cs
+├── Controllers/Api/
+│   └── AttributeSqlController.cs        # 軽量化（60行）
+├── Features/Attributes/
+│   ├── Commands/                        # 書き込み操作
+│   ├── Queries/                         # 読み取り操作
+│   └── Handlers/                        # ビジネスロジック（20行/個）
+├── Infrastructure/Behaviors/            # 新規作成
+│   ├── LoggingBehavior.cs
+│   ├── PerformanceBehavior.cs
+│   ├── ValidationBehavior.cs
+│   └── ExceptionHandlingBehavior.cs
+└── Validators/
+    ├── CreateAttributeCommandValidator.cs
+    ├── UpdateAttributeCommandValidator.cs
+    └── ...
+```
+
+### Phase 3 への準備
+
+Phase 2でバックエンドのアーキテクチャを完成させました。Phase 3では**フロントエンドの強化**を行います：
+
+- **React Query**: サーバーステート管理の改善
+- **Jotai**: クライアントステート管理の導入
+- **TanStack Table**: 高機能なテーブルUI
 - **TanStack Table導入**: テーブルUIの高度化
 - **エラーハンドリング**: MediatR Pipeline Behaviorでグローバルエラーハンドリング
 - **キャッシング**: MediatR Pipeline Behaviorでキャッシング実装

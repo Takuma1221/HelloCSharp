@@ -1,0 +1,122 @@
+@{
+    ViewData["Title"] = "属性管理 (Phase 3)";
+}
+
+@*
+    React版 属性管理画面（Phase 3強化版）
+    対応するReactコンポーネント: Scripts/react/pages/AttributePageV2.tsx
+    使用技術:
+    - React Query: サーバーステート管理
+    - Jotai: クライアントステート管理
+    - TanStack Table: テーブル機能（ソート、フィルター、ページネーション）
+*@
+
+<div id="react-root">
+    @* Reactアプリがここにマウントされる *@
+    <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2 text-muted">読み込み中...</p>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="/js/react/attribute-page-v2.js"></script>
+}
+
+<style>
+    /* モーダルオーバーレイ */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 1040;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .modal-overlay.show {
+        display: block;
+        opacity: 1;
+    }
+
+    /* モーダルダイアログ */
+    .modal-dialog-custom {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.9);
+        z-index: 1050;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        max-width: 500px;
+        width: 90%;
+        opacity: 0;
+        transition: all 0.3s;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .modal-dialog-custom.show {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+
+    /* トースト通知 */
+    .toast-container-custom {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1060;
+    }
+
+    .toast-custom {
+        margin-bottom: 10px;
+        animation: slideIn 0.3s;
+    }
+
+    @@keyframes slideIn {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+
+    /* ローディングオーバーレイ */
+    .loading-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.8);
+        z-index: 1030;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .loading-overlay.show {
+        display: flex;
+    }
+
+    /* TanStack Table用カーソルスタイル */
+    .cursor-pointer {
+        cursor: pointer;
+    }
+
+    .user-select-none {
+        user-select: none;
+    }
+</style>
